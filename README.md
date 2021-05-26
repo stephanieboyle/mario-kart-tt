@@ -1,3 +1,22 @@
+# Tidy Tuesday : Mario Kart
+## 25-05-2021
+
+
+Data comes from [github.com/rfordatascience/tidytuesday](https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-05-25/readme.md)
+
+
+I didn't have much time, but was interested to see if everyone else found Rainbow Road as hard as I did!
+
+
+![](final_plots/mario_kart_tracks.png)
+
+
+Data seems to confirm... yes they did. 
+
+
+R Code:
+
+```
 # load in the libraries
 library(tidyverse)
 library(tidytext)
@@ -28,8 +47,7 @@ records %>%
   coord_flip() +
   scale_x_reordered() + 
   scale_fill_manual(values = c("#5B0893","#078C84")) + 
-  labs(title = "Which tracks take the most time?",
-      subtitle = "From the data, it seems that whether it is one or three laps,\nrainbow road is the hardest!\n ",
+  labs(title = "Which tracks take the most time?\n", 
        y = "\nMedian time (mins)", 
        x = " ") + 
   my_theme
@@ -38,25 +56,4 @@ records %>%
 ggsave("final_plots/mario_kart_tracks.png")
 
 
-
-# do shortcuts pay off?
-records %>% 
-  group_by(track, shortcut) %>%
-  summarise(total_time = median(time, na.rm = TRUE)/60) %>% 
-  arrange(track, shortcut) %>%
-  ggplot(aes(x = shortcut, y = total_time, fill = shortcut)) + 
-  geom_col() + 
-  facet_wrap( . ~ track) + 
-  labs(title = "Does taking a shortcut pay off?", 
-          subtitle = "From the data, it seems that every time a shortcut is taken, the \nmedian times are lower. Time saved probably offsets \nthe risks of shortcuts.\n ", 
-       x = "\n Shortcut used?",
-       y = "Average time (mins) \n") + 
-  scale_fill_manual(values = c("#5B0893","#078C84")) + 
-  my_theme
-
-# save the plot
-ggsave("final_plots/short_cuts.png")
-
-
-
-
+```
