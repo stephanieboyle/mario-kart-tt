@@ -1,59 +1,42 @@
-# Tidy Tuesday : Mario Kart
-## 25-05-2021
+# Taking the long way round Rainbow Road
+### A little Mario Kart, a little data, and a question I couldn't resist.
 
+![R](https://img.shields.io/badge/R-276DC3?style=flat&logo=r&logoColor=white) ![Project](https://img.shields.io/badge/TidyTuesday-5B0893?style=flat) ![Date](https://img.shields.io/badge/25_May_2021-078C84?style=flat)
 
-Data comes from [github.com/rfordatascience/tidytuesday](https://github.com/rfordatascience/tidytuesday/blob/master/data/2021/2021-05-25/readme.md)
+I wanted to see how Rainbow Road compared with the other tracks. This small TidyTuesday project explores recorded times by track and asks how shortcut records compare.
 
+**[See the R code →](mario_kart_analysis.R)** · [Explore the snapshot](data/records.csv)
 
-I didn't have much time, but was interested to see if everyone else found Rainbow Road as hard as I did!
+![Median Mario Kart record times by track and record type](final_plots/mario_kart_tracks.png)
 
+## The two questions
 
-![](final_plots/mario_kart_tracks.png)
+| Question | How I approached it |
+|---|---|
+| Which tracks take longer? | Compare median recorded times by track, keeping record types separate. |
+| How do shortcut records compare? | Compare median times with and without shortcuts within each track. |
 
+![Shortcut and non-shortcut median times, faceted by track](final_plots/short_cuts.png)
 
-Data seems to confirm... yes they did. 
+## Run it yourself
 
+Open `mario-kart-tt.Rproj`, or start R in this repository's folder:
 
-R Code:
-
+```r
+install.packages(c("tidyverse", "tidytext"))
+source("mario_kart_analysis.R")
 ```
-# load in the libraries
-library(tidyverse)
-library(tidytext)
 
-# create my theme options
-my_theme <- theme_bw() + 
-  theme(text = element_text(family="Fira Code", size = 16), 
-        plot.title = element_text(size = 28, face = "bold")) + 
-  theme(legend.position = "none") + 
-  theme(plot.margin=unit(c(1.5,1.5,1.5,1.5),"cm"))
+The script reads the bundled `data/records.csv` and writes both PNGs into `final_plots/`. It uses a system font, so you don't need to install Fira Code. The script and chart exports were rerun during the 2026 refresh with R 4.4.1.
 
-# load in the data 
-records <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-05-25/records.csv')
+## What the charts can tell us
 
-# have a look at the data 
-glimpse(records)
+Longer recorded times are not proof that a track is more difficult: track length and record type matter too. The shortcut comparison is observational, and the chart pools record types within each track. Different players, dates and record types may affect the result; this is not a controlled estimate of the benefit of taking a shortcut.
 
-# test which tracks take the longest (type of lap maybe has an effect)
-records %>% 
-  group_by(track, type) %>% 
-  summarise(median_times = median(time, na.rm = TRUE)/60) %>%
-  ungroup() %>%
-  mutate(type = as.factor(type),
-         track = reorder_within(track, median_times, type)) %>%
-  ggplot(aes(x = track, y = median_times, fill = type)) +
-  geom_col(show.legend = FALSE) +
-  facet_wrap(~ type, scales="free_y") +
-  coord_flip() +
-  scale_x_reordered() + 
-  scale_fill_manual(values = c("#5B0893","#078C84")) + 
-  labs(title = "Which tracks take the most time?\n", 
-       y = "\nMedian time (mins)", 
-       x = " ") + 
-  my_theme
+That still leaves a fun starting point for a better question: what changes when we compare like-for-like record types?
 
-# save the plot
-ggsave("final_plots/mario_kart_tracks.png")
+## Source
 
+[TidyTuesday, 25 May 2021](https://github.com/rfordatascience/tidytuesday/tree/main/data/2021/2021-05-25). The bundled CSV is a copy of that historical records dataset, included so the analysis can run without a live download. It is not a current leaderboard.
 
-```
+Made by [Steph Boyle](https://stephanieboyle.github.io/) · R · Visualisation · A bit of fun
